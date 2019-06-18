@@ -1,0 +1,45 @@
+#each joint name reffers to a joint motor
+#motion names reffers to the motions which we can perform using these motors
+#each motion has step value for each motor 
+myjoints:
+ names: [joint1,joint2,joint3]
+ joint1:
+    names: [motor_1,motor_2,motor_3]
+    motion:
+      names: [robin, zero, left]
+      robin:
+        step: [-3.14,-3.14,-3.14]  # radian
+        time_from_start: 1.0  # sec
+      zero:
+        step: [0.0,0.0,0.0]
+        time_from_start: 2.0
+      left:
+        step: [3.14,3.14,3.14]
+        time_from_start: 3.0
+ joint2:
+    names: [motor_4]
+    motion:
+      names: [m_1, m_2, m_3]
+      m_1:
+        step: [-3.14]  # radian
+        time_from_start: 4.0  # sec
+      m_2:
+        step: [0.0]
+        time_from_start: 5.0
+      m_3:
+        step: [3.14]
+        time_from_start: 6.0
+ joint3:
+    names: [motor_2,motor_3, motor_7,motor_1]
+    motion:
+      names: [m_4, m_5, m_6]
+      m_4:
+        step: [-3.14,-3.14,-3.14,-3.14]  # radian
+        time_from_start: 7.0  # sec
+      m_5:
+        step: [0.0,0.0,0.0,0.0]
+        time_from_start: 8.0
+      m_6:
+        step: [3.14,3.14,3.14,3.14]
+        time_from_start: 9.0
+#so here all three motors will move -3.14 radians from initial position in 2 seconds then to 0 radians and then to +3.14 radians 

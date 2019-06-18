@@ -1,0 +1,8 @@
+# This message is used to get the pose name and execute the corresponding service
+
+
+string pose_name
+
+---
+
+bool result
