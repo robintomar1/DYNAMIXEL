@@ -1,3 +1,12 @@
+# this repository contains complete dynamixel workbench package 
+ most of the packages are unchanged as they are on official robotis website
+  i am working on joint operator and joint controller packages to achieve two things
+  1) use multiple dynamixel motors in different poses 
+     the default package provides only single pose for motors and for any other pose you have to write another operator
+     but the changed i have made makes that possible
+  2) i want to be able to call my poses using services and actions 
+
+
 # Dynamixel Workbench
 ![](https://github.com/ROBOTIS-GIT/emanual/blob/master/assets/images/sw/dynamixel/dynamixel_workbench/DYNAMIXEL_WORKBENCH_LOGO.png)
 
