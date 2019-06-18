@@ -1,4 +1,4 @@
-# this repository contains complete dynamixel workbench package 
+# other than dynamixel workbench package 
  most of the packages are unchanged as they are on official robotis website
   i am working on joint operator and joint controller packages to achieve two things
   1) use multiple dynamixel motors in different poses 
