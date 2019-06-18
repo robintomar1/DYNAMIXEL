@@ -21,7 +21,7 @@
 //Fri 07 Jun 2019 07:19:33 AM IST 
 //edited for different number of motors in single file 
 //Sat 08 Jun 2019 12:38:58 PM IST 
-
+//from now on any changes made will be recorded
 
 #include "dynamixel_workbench_operators/joint_operator.h"
 uint8_t my_joint_size;
