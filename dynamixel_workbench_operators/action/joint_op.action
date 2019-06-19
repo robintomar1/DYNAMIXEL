@@ -1,0 +1,11 @@
+#goal definition
+#the lines with the hash signs are merely comments
+#goal, result and feedback are defined by this fixed order, and separated by 3 hyphens
+string input
+---
+#result definition
+string output
+string goal_stamp
+---
+#feedback
+string fdbk
