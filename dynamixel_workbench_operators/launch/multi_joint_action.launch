@@ -1,0 +1,10 @@
+<launch>
+  <arg name="namespace"               default="dynamixel_workbench"/>
+  <arg name="is_loop"               default="false"/>
+  
+  <param name="trajectory_info" value="$(find dynamixel_workbench_operators)/config/multi_joint_motion.yaml"/>
+  <node name ="joint_operator_action" pkg="dynamixel_workbench_operators" type="joint_operator_action">
+        required="true" output="screen" ns="$(arg namespace)">
+    <param name="is_loop" value="$(arg is_loop)"/>
+  </node>
+</launch>
