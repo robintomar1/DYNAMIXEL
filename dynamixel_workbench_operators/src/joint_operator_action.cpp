@@ -21,16 +21,17 @@
 //Fri 07 Jun 2019 07:19:33 AM IST 
 //edited for different number of motors in single file 
 //Sat 08 Jun 2019 12:38:58 PM IST 
+//wed jun 19 the joint operator file is rewritten with edits to make it a action server for poses
 
 
 #include "dynamixel_workbench_operators/joint_operator.h"
 #include <actionlib/server/simple_action_server.h>
-#include<example_action_package/test_2Action.h>
+#include<example_action_package/test_2Action.h> //this is custom built action definition will include in the same package soon
 
 uint8_t my_joint_size;
 #define max_number_of_joints 5 //change this value for more number of joints
 
-std::string yaml_file = param<std::string>("trajectory_info", "");
+std::string yaml_file = param<std::string>("trajectory_info", ""); //this was causing problem while inside the constructor of joint operator
 
 JointOperator::JointOperator()
   :node_handle_(""),
@@ -174,10 +175,10 @@ void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<example_
       //do work here: this is where your interesting code goes
     //since "goal is a pointer of type defined in the above line , we need to use arrow operator to acess the members"
     //dot (.) operaor works with variables not with pointers
-   	ROS_INFO("*************inside service call back **********");
+   	ROS_INFO("*************inside action call back **********");
 	if (0==goal->input.compare("one"))
 	{
-			ROS_INFO("inside service call back with pose one");
+			ROS_INFO("inside action call back with pose one");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+0));  
   			result_message.output = "first pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
@@ -188,7 +189,7 @@ void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<example_
 	}
 	else if (0==goal->input.compare("two"))
 	{
-			ROS_INFO("inside service call back with pose two");
+			ROS_INFO("inside action call back with pose two");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+1));  
 			result_message.output = "second pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
@@ -199,7 +200,7 @@ void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<example_
 	}
  	else if (0==goal->input.compare("three"))
 	{
-			ROS_INFO("inside service call back with pose three");
+			ROS_INFO("inside action call back with pose three");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+2));  
 			result_message.output = "third pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
