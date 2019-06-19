@@ -21,17 +21,16 @@
 //Fri 07 Jun 2019 07:19:33 AM IST 
 //edited for different number of motors in single file 
 //Sat 08 Jun 2019 12:38:58 PM IST 
-//wed jun 19 the joint operator file is rewritten with edits to make it a action server for poses
-
+//Wed 19 Jun 2019 02:57:33 PM IST action server
 
 #include "dynamixel_workbench_operators/joint_operator.h"
 #include <actionlib/server/simple_action_server.h>
-#include<example_action_package/test_2Action.h> //this is custom built action definition will include in the same package soon
+#include<dynamixel_workbench_operators/joint_opAction.h>
 
 uint8_t my_joint_size;
 #define max_number_of_joints 5 //change this value for more number of joints
 
-std::string yaml_file = param<std::string>("trajectory_info", ""); //this was causing problem while inside the constructor of joint operator
+std::string yaml_file; 
 
 JointOperator::JointOperator()
   :node_handle_(""),
@@ -139,84 +138,62 @@ private:
 
     ros::NodeHandle nh_;  // we'll need a node handle; get one upon instantiation
 
-    actionlib::SimpleActionServer<example_action_package::test_2Action> as_;
+    actionlib::SimpleActionServer<dynamixel_workbench_operators::joint_opAction> as_;
     
     // here are some message types to communicate with our client(s)
-    example_action_package::test_2Goal input_message; // goal message, received from client
-    example_action_package::test_2Result result_message; // put results here, to be sent back to the client when done w/ goal
-    example_action_package::test_2Feedback feedback_message; // not used in this example; 
-    // would need to use: as_.publishFeedback(feedback_); to send incremental feedback to the client
-
-
-
+    dynamixel_workbench_operators::joint_opGoal input_message; 
+    dynamixel_workbench_operators::joint_opResult result_message;
+    dynamixel_workbench_operators::joint_opFeedback feedback_message; 
+  
 public:
     ExampleActionServer(); //define the body of the constructor outside of class definition
 
     ~ExampleActionServer(void) {
     }
     // Action Interface
-    void executeCB(const actionlib::SimpleActionServer<example_action_package::test_2Action>::GoalConstPtr& goal);
+    void executeCB(const actionlib::SimpleActionServer<dynamixel_workbench_operators::joint_opAction>::GoalConstPtr& goal);
 };
 
 
 ExampleActionServer::ExampleActionServer() :
-   as_(nh_, "example_action", boost::bind(&ExampleActionServer::executeCB, this, _1),false) 
-// in the above initialization, we name the server "example_action"
-//  clients will need to refer to this name to connect with this server
+   as_(nh_, "pose_action", boost::bind(&ExampleActionServer::executeCB, this, _1),false) 
 {
     ROS_INFO("in constructor of exampleActionServer...");
-    // do any other desired initializations here...specific to your implementation
-
     as_.start(); //start the server running
 }
 
-void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<example_action_package::test_2Action>::GoalConstPtr& goal) {
+void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<dynamixel_workbench_operators::joint_opAction>::GoalConstPtr& goal) {
   
-      //do work here: this is where your interesting code goes
     //since "goal is a pointer of type defined in the above line , we need to use arrow operator to acess the members"
     //dot (.) operaor works with variables not with pointers
-   	ROS_INFO("*************inside action call back **********");
+   	ROS_INFO("*************inside service call back **********");
 	if (0==goal->input.compare("one"))
 	{
-			ROS_INFO("inside action call back with pose one");
+			ROS_INFO("inside service call back with pose one");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+0));  
   			result_message.output = "first pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
 			ROS_INFO("executed sucessfully");
-         		as_.setSucceeded(result_message); // tell the client that we were successful acting on the request, and return the "result" message
-
-
-	}
+         		as_.setSucceeded(result_message); 
+       	}
 	else if (0==goal->input.compare("two"))
 	{
-			ROS_INFO("inside action call back with pose two");
+			ROS_INFO("inside service call back with pose two");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+1));  
 			result_message.output = "second pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
 			ROS_INFO("executed sucessfully");
-         		as_.setSucceeded(result_message); // tell the client that we were successful acting on the request, and return the "result" message
-
-
-	}
+         		as_.setSucceeded(result_message);
+       	}
  	else if (0==goal->input.compare("three"))
 	{
-			ROS_INFO("inside action call back with pose three");
+			ROS_INFO("inside service call back with pose three");
 			joint_trajectory_pub_.publish(*(jnt_tra_msg_+2));  
 			result_message.output = "third pose"; // we'll use the member variable result_, defined in our class
 			result_message.goal_stamp = goal->input;
 			ROS_INFO("executed sucessfully");
-        		as_.setSucceeded(result_message); // tell the client that we were successful acting on the request, and return the "result" message
-
-
+        		as_.setSucceeded(result_message); 
 	}
-	else
-	{
-			ROS_INFO("could not publish service");
-			result_message.output = "no predefined pose with this message"; // we'll use the member variable result_, defined in our class
-			result_message.goal_stamp = goal->input;
-			ROS_WARN("informing client of aborted goal");
-			as_.setAborted(result_message); // tell the client we have given up on this goal; send the result message as well
-	 }
 }
 
 
@@ -224,20 +201,16 @@ void ExampleActionServer::executeCB(const actionlib::SimpleActionServer<example_
 
 int main(int argc, char **argv)
 {
-	ROS_INFO("inside main");
-
-	// Init ROS node
+  ROS_INFO("inside main");
   ros::init(argc, argv, "joint_operator_action");
+  ros::NodeHandle server_node;
+  yaml_file=server_node.param<std::string>("trajectory_info", "");
   JointOperator joint_operator; // create an instance of the class "JointOperator"
-  
   ExampleActionServer as_object; // create an instance of the class "ExampleActionServer"
-
-    ROS_INFO("going into spin");
-    // from here, all the work is done in the action server, with the interesting stuff done within "executeCB()"
-    // you will see 5 new topics under example_action: cancel, feedback, goal, result, status
-    while ( ros::ok()) {
-        ros::spinOnce(); //normally, can simply do: ros::spin();  
-        // for debug, induce a halt if we ever get our client/server communications out of sync
+  ROS_INFO("going into spin");
+  while ( ros::ok())
+   {
+        ros::spinOnce(); 
     }
   return 0;
 }
