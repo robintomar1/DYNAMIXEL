@@ -29,6 +29,14 @@
 #include <string.h>
 #include "std_msgs/String.h"
 
+  ros::Publisher joint_trajectory_pub_;
+
+  // ROS Topic Subscriber
+
+  // ROS Service Client
+
+  trajectory_msgs::JointTrajectory *jnt_tra_msg_;
+
 class JointOperator
 {
  private:
@@ -38,29 +46,16 @@ class JointOperator
   // ROS Parameters
 
   // ROS Topic Publisher
-  ros::Publisher joint_trajectory_pub_;
-
-  // ROS Topic Subscriber
-
-  // ROS Service Server
-  ros::ServiceServer move_command_server_;
-
-
-  // ROS Service Client
-
-  trajectory_msgs::JointTrajectory *jnt_tra_msg_;
   bool is_loop_;
 
  public:
   JointOperator();
   ~JointOperator();
+  
 
   bool isLoop(void){ return is_loop_;}
 
   bool getTrajectoryInfo(const std::string yaml_file, trajectory_msgs::JointTrajectory *jnt_tra_msg);
- bool moveCommandMsgCallback(dynamixel_workbench_operators::pose_name::Request &req,
-                                           dynamixel_workbench_operators::pose_name::Response &res);
-
 };
 
 #endif // DYNAMIXEL_WORKBENCH_OPERATORS_H
