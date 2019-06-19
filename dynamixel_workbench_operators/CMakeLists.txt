@@ -20,6 +20,8 @@ find_package(catkin REQUIRED COMPONENTS
   trajectory_msgs
   cmake_modules
   message_generation
+  actionlib
+  actionlib_msgs
 )
 
 # Resolve system dependency on yaml-cpp, which apparently does not
@@ -50,6 +52,12 @@ endif(NOT ${YAML_CPP_VERSION} VERSION_LESS "0.5")
 ################################################################################
 # Declare ROS messages, services and actions
 ################################################################################
+add_action_files(
+   FILES
+   joint_op.action
+#   Action2.action
+)
+
 add_service_files(
   FILES
   pose_name.srv
@@ -58,6 +66,7 @@ add_service_files(
 generate_messages(
   DEPENDENCIES
   std_msgs
+  actionlib_msgs
 )
 ################################################################################
 # Declare ROS dynamic reconfigure parameters
@@ -80,9 +89,18 @@ include_directories(
   ${YAML_CPP_INCLUDE_DIRS}
 )
 
-add_executable(joint_operator src/joint_operator.cpp)
-add_dependencies(joint_operator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
-target_link_libraries(joint_operator ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES})
+add_executable(joint_action_client src/joint_action_client.cpp)
+add_dependencies(joint_action_client ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(joint_action_client ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES})
+
+
+#add_executable(joint_operator src/joint_operator.cpp)
+#add_dependencies(joint_operator ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+#target_link_libraries(joint_operator ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES})
+
+add_executable(joint_operator_action src/joint_operator_action.cpp)
+add_dependencies(joint_operator_action ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+target_link_libraries(joint_operator_action ${catkin_LIBRARIES} ${YAML_CPP_LIBRARIES})
 
 add_executable(service_caller src/service_caller.cpp)
 add_dependencies(service_caller ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
@@ -95,7 +113,13 @@ target_link_libraries(wheel_operator ${catkin_LIBRARIES})
 #################################################################################
 ## Install
 #################################################################################
-install(TARGETS joint_operator wheel_operator service_caller
+#joint_operator
+install(TARGETS 
+ joint_action_client
+ #joint_operator
+ joint_operator_action
+ wheel_operator 
+ service_caller
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
